@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyletWpfApp", "StyletWpfApp\StyletWpfApp.csproj", "{B774C29F-662D-45F9-9158-034E9879956E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyletWpfTechnicalApp", "StyletWpfTechicalApp\StyletWpfTechnicalApp.csproj", "{237DD286-61C3-41F5-8943-29035ED81BE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B774C29F-662D-45F9-9158-034E9879956E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B774C29F-662D-45F9-9158-034E9879956E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B774C29F-662D-45F9-9158-034E9879956E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B774C29F-662D-45F9-9158-034E9879956E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{237DD286-61C3-41F5-8943-29035ED81BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{237DD286-61C3-41F5-8943-29035ED81BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{237DD286-61C3-41F5-8943-29035ED81BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{237DD286-61C3-41F5-8943-29035ED81BE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {460D1679-AAA8-4C89-82CD-AEFC5EEE2054}
+	EndGlobalSection
+EndGlobal
