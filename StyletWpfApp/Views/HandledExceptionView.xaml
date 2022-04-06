@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:StyletWpfApp.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="https://github.com/canton7/Stylet"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              d:DesignHeight="330"
              d:DesignWidth="600"
              Style="{DynamicResource StyletWpfApp_Control}"
@@ -21,6 +22,15 @@
         <TextBlock Margin="15"
                    FontSize="32"
                    Text="{Binding Title}" />
+
+        <Button Width="30"
+                Margin="0,0,15,0"
+                HorizontalAlignment="Right"
+                Command="{s:Action Close}"
+                Content="Close"
+                Style="{DynamicResource VerifyClick}"
+                ToolTip="Close" />
+
         <TextBlock Grid.Row="1"
                    Margin="15,-5,15,0"
                    FontSize="22"
@@ -68,7 +78,7 @@
                            RequestNavigate="{s:Action Report}">
                     <Hyperlink.ToolTip>
                         <TextBlock>
-                            <Run>Makes a new GitHub issue with the exception details.</Run>
+                            <Run>Makes a new Markdown issue with the exception details.</Run>
                             <LineBreak />
                             <LineBreak />
                             <Run FontWeight="Bold">Warning</Run>
@@ -79,6 +89,10 @@
                     Report Error
                 </Hyperlink>
             </TextBlock>
+            <ProgressBar Margin="15,2,0,2"
+                         Foreground="{DynamicResource SecondaryHueLightBrush}"
+                         IsIndeterminate="{Binding IsLoading}"
+                         Style="{DynamicResource MaterialDesignCircularProgressBar}" />
         </StackPanel>
         <StackPanel Grid.Row="3"
                     Margin="0,-2.5,10,0"
@@ -101,7 +115,7 @@
                         <LineBreak />
                         <Run FontWeight="Bold" Text="- Warning" />
                         <LineBreak />
-                        <Run Text="This information will be made public if you choose to upload to a public repo." />
+                        <Run Text="This information will be made public if you choose to report the error." />
                         <LineBreak />
                         <Run Text="Make sure you know what you are doing before proceding." />
                         <LineBreak />
