@@ -1,73 +1,161 @@
-﻿using StyletWpfApp.ViewModels;
+﻿using Discord;
+using Octokit;
+using StyletWpfApp.ViewModels;
+using StyletWpfApp.ViewResources.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Operations;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StyletWpfApp.ViewResources.Helpers
 {
     public class ReportError
     {
-        public static async Task Discord(HandledExceptionViewModel ex)
+        public static async Task DiscordMessage(ulong channelId, string body)
         {
-            throw new NotImplementedException();
+            DiscordBot bot = new();
+            await bot.RunAsync(ReportError);
+
+            async Task ReportError()
+            {
+                if (bot.Client == null)
+                    return;
+
+                IMessageChannel channel = (IMessageChannel)await bot.Client.GetChannelAsync(channelId);
+
+                await channel.SendMessageAsync(body);
+            }
         }
 
-        public static async Task GitHub(UnhandledExceptionViewModel ex)
+        public static async Task<bool> DiscordEmbed(ulong channelId, HandledExceptionViewModel ex) => await DiscordEmbed(channelId, ex.Title, ex.Message, ex.StackText, ex.User);
+        public static async Task<bool> DiscordEmbed(ulong channelId, UnhandledExceptionViewModel ex) => await DiscordEmbed(channelId, ex.Title, ex.MessageText, ex.Stack, "Anonymous");
+        public static async Task<bool> DiscordEmbed(ulong channelId, string title, string message, string stack, string user)
         {
-            throw new NotImplementedException();
+            bool results = false;
+
+            DiscordBot bot = new();
+            await bot.RunAsync(ReportError);
+            return results;
+
+            async Task ReportError()
+            {
+                if (bot.Client == null)
+                {
+                    results = false;
+                    return;
+                }
+
+                IMessageChannel channel = (IMessageChannel)bot.Client.GetChannel(channelId);
+
+                if (channel == null)
+                {
+                    results = false;
+                    return;
+                }
+
+                EmbedBuilder embed = new()
+                {
+                    Title = title,
+                    Description = message,
+                    Footer = new() { Text = new ShellViewModel(null).Title },
+                    Timestamp = DateTime.Now,
+                    Author = new()
+                    { 
+                        Name = user,
+                        IconUrl = user.ToLower() == "anonymous" ? "https://static.thenounproject.com/png/302770-200.png" :
+                            "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png"
+                    },
+                    Color = Color.Blue
+                };
+
+                if (stack.Length <= 200)
+                {
+                    embed.AddField("Stack Trace", stack);
+                }
+                else
+                {
+                    embed.AddField("Stack Trace", "- - - - - - - - -");
+
+                    foreach (var trace in stack.Split("   at "))
+                    {
+                        if (trace.Trim().Length > 1 && embed.Fields.Count < 15)
+                        {
+                            embed.AddField("at", trace.Trim());
+                        }
+                        else if (embed.Fields.Count > 15)
+                        {
+                            embed.Fields.Clear();
+                            break;
+                        }
+                    }
+
+                    if (embed.Fields.Count == 0)
+                    {
+                        List<Embed> embeds = new();
+                        embeds.Add(embed.Build());
+
+                        foreach (var trace in stack.Split("   at "))
+                        {
+                            if (trace.Trim().Length > 1 && embed.Fields.Count < 15)
+                            {
+                                EmbedBuilder subEmbed = new();
+                                subEmbed.AddField("at", trace);
+                                embeds.Add(subEmbed.Build());
+                            }
+                        }
+
+                        await channel.SendMessageAsync(embeds: embeds.ToArray());
+                        results = true;
+                        return;
+                    }
+                }
+
+                await channel.SendMessageAsync(embed: embed.Build());
+                results = true;
+                return;
+            }
         }
 
-        public static async Task Markdown(HandledExceptionViewModel ex)
+        public static async Task<bool> GitHub(Stylet.IWindowManager win, string repo, string title, string body, string owner = "archleaders")
         {
-            throw new NotImplementedException();
+            // Get repo
+            if (!win.Show($"{ToolTips.ReportError}\n\nContinue anyway?", "Privacy Warning", true, width: 500)) return false;
+
+            // Create git client
+            GitHubClient client = new(new ProductHeaderValue($"{repo}--{new Random().Next(1000, 9999)}"));
+            client.Credentials = new Credentials(Data.User.GitHubToken);
+
+            // Create new issue
+            var issueNew = await client.Issue.Create(owner, repo, new NewIssue(title) {Body = body});
+            win.Show($"Created issue: {issueNew.Id}");
+
+            return true;
         }
 
-        public static async Task Markdown(UnhandledExceptionViewModel ex)
-        {
-            throw new NotImplementedException();
-        }
-
+        public static string Markdown(HandledExceptionViewModel ex) => Markdown(ex.Title, ex.Message, ex.StackText, ex.User);
+        public static string Markdown(UnhandledExceptionViewModel ex) => Markdown(ex.Title, ex.MessageText, ex.Stack, "Anonymous");
         public static string Markdown(string title, string message, string stack, string user)
         {
-            return new(
-                $"# {title}\n" +
-                $"> {user}\n\n" +
-                $"{message}\n\n" +
-                $"```\n{stack}\n```"
-            );
+            return $"# {title}\n> {user}\n\n{message}\n\n```\n{stack}\n```";
         }
 
+        public static async Task HtmlView(UnhandledExceptionViewModel ex) => await HtmlView(new HandledExceptionViewModel(null, ex.Title, ex.MessageText, ex.Stack));
         public static async Task HtmlView(HandledExceptionViewModel ex)
         {
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-            string htmlFile = $"{appdata}\\Temp\\{new Random().Next(1000, 9999)}-{new Random().Next(1000, 9999)} - {ex.Message} - index.htm";
-            string fullReport = HtmlView(ex.Title, ex.Message, ex.StackText, ex.User)
-                .Replace(user, "C:\\Users\\admin");
+            string htmlFile = $"{appdata}\\Temp\\{new Random().Next(1000, 9999)}-{new Random().Next(1000, 9999)}.htm";
+            string fullReport = Html(ex).Replace(user, "C:\\Users\\admin");
 
             await File.WriteAllTextAsync(htmlFile, fullReport);
             await Execute.Explorer($"\"{htmlFile}\"");
         }
 
-        public static async Task HtmlView(UnhandledExceptionViewModel ex)
-        {
-            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-            string htmlFile = $"{appdata}\\Temp\\{new Random().Next(1000, 9999)}-{new Random().Next(1000, 9999)} - {ex.Message} - index.htm";
-            string fullReport = HtmlView(ex.Title, ex.MessageText, ex.Stack, "Anonymous")
-                .Replace(user, "C:\\Users\\admin");
-
-            await File.WriteAllTextAsync(htmlFile, fullReport);
-            await Execute.Explorer($"\"{htmlFile}\"");
-        }
-
-        public static string HtmlView(string title, string message, string stack, string user)
+        public static string Html(HandledExceptionViewModel ex) => Html(ex.Title, ex.Message, ex.StackText, ex.User);
+        public static string Html(UnhandledExceptionViewModel ex) => Html(ex.Title, ex.MessageText, ex.Stack, "Anonymous");
+        public static string Html(string title, string message, string stack, string user)
         {
             // - - Make an actuall class to create this in future - -
 
