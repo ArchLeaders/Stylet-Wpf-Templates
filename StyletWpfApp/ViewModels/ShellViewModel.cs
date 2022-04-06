@@ -1,12 +1,6 @@
-﻿#pragma warning disable CS0108
-#pragma warning disable CS8612
-#pragma warning disable CS8618
-
-using Stylet;
+﻿using Stylet;
 using StyletWpfApp.ViewResources.Helpers;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace StyletWpfApp.ViewModels
@@ -19,10 +13,13 @@ namespace StyletWpfApp.ViewModels
         public static int MinHeight { get; set; } = 400;
         public static int MinWidth { get; set; } = 600;
         public static bool CanResize { get; set; } = true;
-        public string HelpLink { get; set; } = "https://github.com/ArchLeaders";
-        public string GitHubRepo { get; set; } = "stylet-wpf-template";
-        public ulong ServerID { get; set; } = 0;
+        public string HelpLink { get; set; } = "https://github.com/ArchLeaders/stylet-wpf-templates";
         public string Title { get; set; } = "$projectname$";
+
+        // Error report settings
+        public static bool UseGitHubUpload { get; set; } = false;
+        public string GitHubRepo { get; set; } = "stylet-wpf-templates";
+        public ulong DiscordReportChannel { get; set; } = 961334714633965569;
 
         ///
         /// Actions
@@ -96,8 +93,8 @@ namespace StyletWpfApp.ViewModels
             proc.Start();
         }
 
-        public IWindowManager WindowManager { get; set; }
-        public ShellViewModel(IWindowManager windowManager)
+        public IWindowManager? WindowManager { get; set; }
+        public ShellViewModel(IWindowManager? windowManager)
         {
             WindowManager = windowManager;
             SettingsViewModel = new(this);
