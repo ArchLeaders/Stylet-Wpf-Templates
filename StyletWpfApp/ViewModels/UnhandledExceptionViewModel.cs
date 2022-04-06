@@ -99,10 +99,10 @@ namespace StyletWpfApp.ViewModels
 
         #endregion
 
-        public UnhandledExceptionViewModel(string message, string title = "Notice", bool isOption = false, string? extendedMessage = null,
+        public UnhandledExceptionViewModel(string message, string title = "Notice", bool isOption = false, string? stack = null,
             string? extendedMessageColor = null, string yesButtonText = "Yes", string noButtonText = "Auto")
         {
-            MessageText = $"**{title}**\n> {message}\n\n```\n{extendedMessage}\n```";
+            MessageText = $"**{title}**\n> {message}\n\n```\n{stack}\n```";
             Message = message.ToTextBlock();
             Title = title;
             ButtonRight = noButtonText == "Auto" ? "Ok" : noButtonText;
@@ -114,10 +114,10 @@ namespace StyletWpfApp.ViewModels
                 ButtonRight = noButtonText == "Auto" ? "No" : noButtonText;
             }
 
-            if (extendedMessage != null)
+            if (stack != null)
             {
                 DetailVisibility = Visibility.Visible;
-                Stack = extendedMessage;
+                Stack = stack;
 
                 if (extendedMessageColor != null)
                     Foreground = (Brush)new BrushConverter().ConvertFromString(extendedMessageColor);

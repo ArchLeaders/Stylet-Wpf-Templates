@@ -20,7 +20,7 @@ namespace StyletWpfApp.Views
     /// </summary>
     public partial class ShellView : Window
     {
-        private readonly IWindowManager windowManager;
+        private IWindowManager WindowManager { get; }
 
         #region Fix Window Size in fullscreen.
 
@@ -145,7 +145,7 @@ namespace StyletWpfApp.Views
         public ShellView()
         {
             InitializeComponent();
-            DataContext = new ShellViewModel(windowManager);
+            DataContext = new ShellViewModel(WindowManager);
             SourceInitialized += (s, e) =>
             {
                 IntPtr handle = new WindowInteropHelper(this).Handle;

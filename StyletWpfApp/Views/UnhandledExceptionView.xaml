@@ -147,7 +147,7 @@
                              Style="{x:Null}">
                     <FlowDocument>
                         <Paragraph>
-                            <Run Text="{Binding ExtendedMessage}" />
+                            <Run Text="{Binding Stack}" />
                         </Paragraph>
                     </FlowDocument>
                 </RichTextBox>

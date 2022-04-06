@@ -14,10 +14,10 @@ namespace StyletWpfApp.ViewResources.Helpers
             return !(bool)winManager.ShowDialog(promptViewModel);
         }
 
-        public static bool Error(this IWindowManager winManager, string message, string? exMessage = null, string title = "Unhandled Exception", bool isOption = false,
+        public static bool Error(this IWindowManager winManager, string message, string? stack = null, string title = "Unhandled Exception", bool isOption = false,
             string? exColor = null, string yesButtonText = "Yes", string noButtonText = "Auto")
         {
-            UnhandledExceptionViewModel promptViewModel = new(message, title, isOption, exMessage, exColor, yesButtonText, noButtonText);
+            UnhandledExceptionViewModel promptViewModel = new(message, title, isOption, stack, exColor, yesButtonText, noButtonText);
             return !(bool)winManager.ShowDialog(promptViewModel);
         }
     }

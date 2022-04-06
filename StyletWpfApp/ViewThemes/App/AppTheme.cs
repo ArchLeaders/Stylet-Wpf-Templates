@@ -14,7 +14,7 @@ namespace StyletWpfApp.ViewResources.Helpers
             return (Color)ColorConverter.ConvertFromString(color);
         }
 
-        public static string ThemeFile { get; set; } = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Apps\\StyletWpfApp.theme";
+        public static string ThemeFile { get; set; } = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Apps\\$safeprojectname$.theme";
         public static string ThemeStr { get; set; } = $"Dark";
         public static void Change(bool toLight = false)
         {
