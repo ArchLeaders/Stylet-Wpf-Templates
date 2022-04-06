@@ -20,9 +20,12 @@ namespace StyletWpfApp.ViewModels
             }
             catch (Exception ex)
             {
-                ShellViewModel.WindowManager.Show($"{ex.Message}", "Error", isOption: true);
-                ShellViewModel.WindowManager.Error($"{ex.Message}", $"{ex.Source}.{ex.TargetSite}\n\n[Stack Trace]\n{ex.StackTrace}\n\n[Inner Exception]\n{ex.InnerException}");
-                ShellViewModel.ThrowException(new(ShellViewModel, "Handled Exception", ex.Message, ex.StackTrace ?? "", true));
+                if (ShellViewModel.WindowManager != null)
+                {
+                    ShellViewModel.WindowManager.Show($"{ex.Message}", "Error", isOption: true);
+                    ShellViewModel.WindowManager.Error($"{ex.Message}", $"{ex.Source}.{ex.TargetSite}\n\n[Stack Trace]\n{ex.StackTrace}\n\n[Inner Exception]\n{ex.InnerException}");
+                    ShellViewModel.ThrowException(new(ShellViewModel, "Handled Exception", ex.Message, ex.StackTrace ?? "", true));
+                }
             }
         }
 
