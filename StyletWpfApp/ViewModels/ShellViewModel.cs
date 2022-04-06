@@ -1,6 +1,9 @@
 ﻿using Stylet;
 using StyletWpfApp.ViewResources.Helpers;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
 using System.Windows;
 
 namespace StyletWpfApp.ViewModels
@@ -98,6 +101,25 @@ namespace StyletWpfApp.ViewModels
         {
             WindowManager = windowManager;
             SettingsViewModel = new(this);
+        }
+
+        ///
+        /// Root Error handling
+        /// 
+        public void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            Exception ex = e.Exception as Exception ?? new();
+            File.WriteAllText("error.log.txt", $"[{DateTime.Now}]\n- {ex.Message}\n[Stack Trace]\n{ex.StackTrace}\n- - - - - - - - - - - - - - -\n\n");
+            ThrowException(new(this, "Unhandled Exception", ex.Message, ex.StackTrace ?? "", true));
+            Environment.Exit(0);
+        }
+
+        public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = e.ExceptionObject as Exception ?? new();
+            File.WriteAllText("error.log.txt", $"[{DateTime.Now}]\n- {ex.Message}\n[Stack Trace]\n{ex.StackTrace}\n- - - - - - - - - - - - - - -\n\n");
+            ThrowException(new(this, "Unhandled Exception", ex.Message, ex.StackTrace ?? "", true));
+            Environment.Exit(0);
         }
 
         #endregion

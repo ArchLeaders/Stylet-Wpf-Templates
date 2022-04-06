@@ -148,6 +148,9 @@ namespace StyletWpfApp.Views
             DataContext = new ShellViewModel(WindowManager);
             SourceInitialized += (s, e) =>
             {
+                System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(((ShellViewModel)DataContext).Application_ThreadException);
+                AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(((ShellViewModel)DataContext).CurrentDomain_UnhandledException);
+
                 IntPtr handle = new WindowInteropHelper(this).Handle;
                 HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
             };
